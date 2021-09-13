@@ -12,47 +12,48 @@ namespace battleship.Pages
 
         public Player BluePlayer { get; set; }
 
-        public Dictionary<int, int> Ships { get; set; }
+        public Dictionary<ShipType, int> Ships { get; set; }
 
         public int FieldWidth { get; set; }
-
+        public int MaxPoints { get; private set; }
         public int FieldHeight { get; set; }
 
         protected override void OnInitialized()
         {
-            Ships = new Dictionary<int, int>{
-                {5,1},
-                {4,1},
-                {3,2},
-                {2,1}
+            Ships = new Dictionary<ShipType, int>{
+                {ShipType.Carrier,1},
+                {ShipType.Battleship,1},
+                {ShipType.Destroyer,2},
+                {ShipType.PatrolBoat,1}
             };
-
-            Console.WriteLine("Initializing fields");
 
             FieldHeight = 10;
             FieldWidth = 10;
 
-            int maxPoints = Ships.Sum(x => x.Value * x.Key);
-            Console.WriteLine($"Points assigned to players: {maxPoints}");
+            MaxPoints = Ships.Sum(x => x.Value * (int)x.Key);
 
             RedPlayer = new Player
             {
                 GameField = new GameField(FieldWidth, FieldHeight),
                 PlayerMoves = new List<Move>(),
-                PointsLeft = maxPoints
+                PointsLeft = MaxPoints
             };
 
             BluePlayer = new Player
             {
                 GameField = new GameField(FieldWidth, FieldHeight),
                 PlayerMoves = new List<Move>(),
-                PointsLeft = maxPoints
+                PointsLeft = MaxPoints
             };
         }
 
         public void PlaceShips()
         {
-            Console.WriteLine("Placing ships");
+            RedPlayer.PointsLeft = BluePlayer.PointsLeft = MaxPoints;
+
+            RedPlayer.PlayerMoves = new List<Move>();
+
+            BluePlayer.PlayerMoves = new List<Move>();
 
             _gameService.ClearGameField(RedPlayer.GameField);
 
@@ -105,6 +106,29 @@ namespace battleship.Pages
             int x = rand.Next(0, FieldWidth);
             int y = rand.Next(0, FieldHeight);
 
+            var lastSuccessfullMove = shootingPlayer.PlayerMoves.LastOrDefault(x => x.Target.CellState == CellState.Hit);
+
+            if (lastSuccessfullMove != null)
+            {
+                var surroundingMoves = new List<Move>{
+                    new Move {CoordinateX = lastSuccessfullMove.CoordinateX - 1, CoordinateY = lastSuccessfullMove.CoordinateY},
+                    new Move {CoordinateX = lastSuccessfullMove.CoordinateX + 1, CoordinateY = lastSuccessfullMove.CoordinateY},
+                    new Move {CoordinateX = lastSuccessfullMove.CoordinateX, CoordinateY = lastSuccessfullMove.CoordinateY - 1},
+                    new Move {CoordinateX = lastSuccessfullMove.CoordinateX , CoordinateY = lastSuccessfullMove.CoordinateY + 1},
+                }.Where(x => x.CoordinateX >= 0 && x.CoordinateX < FieldWidth &&
+                             x.CoordinateY >= 0 && x.CoordinateY < FieldHeight).ToList();
+
+               var nextMove = surroundingMoves
+               .Where(sm => !shootingPlayer.PlayerMoves
+               .Any(pm => pm.CoordinateX == sm.CoordinateX && pm.CoordinateY == sm.CoordinateY)).ToList().FirstOrDefault();
+
+               if(nextMove != null){
+                   Console.WriteLine($"Found next move {nextMove.CoordinateX}, {nextMove.CoordinateY}");
+                   x = nextMove.CoordinateX;
+                   y = nextMove.CoordinateY;
+               }
+            }
+
             while (shootingPlayer.PlayerMoves.Any(m => m.CoordinateX == x && m.CoordinateY == y))
             {
                 x = rand.Next(0, FieldWidth);
@@ -116,7 +140,6 @@ namespace battleship.Pages
             if (redResult == CellState.Hit)
             {
                 targetPlayer.PointsLeft--;
-                Console.WriteLine($"{playerName} Hit! Enemy score: {targetPlayer.PointsLeft}");
             }
 
             await Task.Delay(100);

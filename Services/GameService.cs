@@ -13,12 +13,12 @@ namespace battleship.Services
             {
                 for (int j = 0; j < gameField.FieldHeight; j++)
                 {
-                    gameField.SetCell(i, j, CellState.Empty);
+                    gameField.SetCell(i, j, CellState.Empty, ShipType.None);
                 }
             }
         }
 
-        public void PlaceShips(IDictionary<int, int> ships, GameField gameField)
+        public void PlaceShips(IDictionary<ShipType, int> ships, GameField gameField)
         {
             Random rand = new Random(Guid.NewGuid().GetHashCode());
 
@@ -35,27 +35,24 @@ namespace battleship.Services
 
                         Direction direction = (Direction)rand.Next(0, 2);
 
-                        if (!gameField.CheckIfShipCanBePlaced(x, y, ship.Key, direction))
+                        if (!gameField.CheckIfShipCanBePlaced(x, y, (int) ship.Key, direction))
                         {
-                            Console.WriteLine($"Cannot place ship at {x}, {y}, ship length: {ship.Key}");
                             continue;
                         }
 
                         switch (direction)
                         {
                             case Direction.Horizontal:
-                                Console.WriteLine($"Placing ship at {x}, {y} Size: {ship.Key}");
-                                for (int j = x; j < x + ship.Key; j++)
+                                for (int j = x; j < x + (int) ship.Key; j++)
                                 {
-                                    gameField.SetCell(j, y, CellState.Ship);
+                                    gameField.SetCell(j, y, CellState.Ship, ship.Key);
                                 }
                                 break;
 
                             case Direction.Vertical:
-                                Console.WriteLine($"Placing ship at {x}, {y} Size: {ship.Key}");
-                                for (int j = y; j < y + ship.Key; j++)
+                                for (int j = y; j < y + (int) ship.Key; j++)
                                 {
-                                    gameField.SetCell(x, j, CellState.Ship);
+                                    gameField.SetCell(x, j, CellState.Ship, ship.Key);
                                 }
                                 break;
                         }
@@ -73,13 +70,13 @@ namespace battleship.Services
             if (attackedCell.CellState == CellState.Empty)
             {
                 targetPlayer.GameField.SetCell(x, y, CellState.Miss);
-                shootingPlayer.PlayerMoves.Add(new Move { CoordinateX = x, CoordinateY = y, result = CellState.Miss });
+                shootingPlayer.PlayerMoves.Add(new Move { CoordinateX = x, CoordinateY = y, Target = attackedCell});
                 return CellState.Miss;
             }
             else
             {
                 targetPlayer.GameField.SetCell(x, y, CellState.Hit);
-                shootingPlayer.PlayerMoves.Add(new Move { CoordinateX = x, CoordinateY = y, result = CellState.Hit });
+                shootingPlayer.PlayerMoves.Add(new Move { CoordinateX = x, CoordinateY = y, Target = attackedCell });
                 return CellState.Hit;
             }
         }

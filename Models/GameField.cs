@@ -41,11 +41,21 @@ namespace battleship.Models
             _cells[x, y].CellState = cellState;
         }
 
+        public void SetCell(int x, int y, CellState cellState, ShipType shipType)
+        {
+            if (x >= _fieldWidth || y >= _fieldHeight)
+            {
+                throw new IndexOutOfRangeException($"Coordinates are out of range: x={x}, field width: {_fieldWidth} or y={y}, field height: {_fieldHeight}");
+            }
+
+            _cells[x, y].CellState = cellState;
+            _cells[x, y].ShipType = shipType;
+        }
+
         public Cell GetCell(int x, int y)
         {
             if (x >= _fieldWidth || y >= _fieldHeight)
             {
-                Console.WriteLine($"Coordinates are out of range: x={x}, field width: {_fieldWidth} or y={y}, field height: {_fieldHeight}");
                 throw new IndexOutOfRangeException($"Coordinates are out of range: x={x}, field width: {_fieldWidth} or y={y}, field height: {_fieldHeight}");
             }
 
@@ -94,7 +104,6 @@ namespace battleship.Models
                     {
                         return false;
                     }
-                    Console.WriteLine(new string('-', 20));
                 }
 
                 //ship side
@@ -117,7 +126,6 @@ namespace battleship.Models
 
                 if (!IsCellEmpty(x, i))
                 {
-                    Console.WriteLine($"Ship collision at {x}, {i}");
                     return false;
                 }
             }
@@ -168,7 +176,6 @@ namespace battleship.Models
 
                 if (!IsCellEmpty(i, y))
                 {
-                    Console.WriteLine($"Ship collision at {i}, {y}");
                     return false;
                 }
             }

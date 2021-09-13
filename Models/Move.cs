@@ -6,6 +6,6 @@ namespace battleship.Models
 
         public int CoordinateY { get; set; }
 
-        public CellState result { get; set; }
+        public Cell Target { get; set; }
     }
 }

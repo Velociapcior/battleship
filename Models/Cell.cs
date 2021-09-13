@@ -5,9 +5,13 @@ namespace battleship.Models
     {
         public CellState CellState { get; set; }
 
+        public ShipType ShipType {get; set;}
+
         public Cell()
         {
             CellState = CellState.Empty;
+
+            ShipType = ShipType.None;
         }
     }
 }

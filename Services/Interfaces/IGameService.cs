@@ -9,6 +9,6 @@ namespace battleship.Services.Interfaces
 
         void ClearGameField(GameField gameField);
 
-        void PlaceShips(IDictionary<int, int> ships, GameField gameField);
+        void PlaceShips(IDictionary<ShipType, int> ships, GameField gameField);
     }
 }

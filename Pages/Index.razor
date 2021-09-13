@@ -4,12 +4,17 @@
 
 <h1 class="h1">Battleship game simulation</h1>
 <div class="container">
-    <button type="button" @onclick="() =>{ PlaceShips(); }" class="btn btn-info">Place ships</button>
-    <button type="button" @onclick="() =>{ StartGame(); }" class="btn btn-success">Start game</button>
-    <div class="row">
-        <div class="col-6">
-            <h3>Player Red</h3>
+    <div class="mb-1">
+        <button type="button" @onclick="() =>{ PlaceShips(); }" class="btn btn-info">Place ships</button>
+        <button type="button" @onclick="() =>{ StartGame(); }" class="btn btn-success">Start game</button>
+        <button type="button" @onclick='async () =>{await TakeShot("red"); }' class="btn btn-danger">Red shoots!</button>
+        <button type="button" @onclick='async () =>{await TakeShot("blue"); }' class="btn btn-primary">Blue shoots!</button>
+    </div>
 
+    <div class="row mb-1">
+        <div class="col-6 mb-1">
+            <h3 class="red mb-1">Player Red</h3>
+            <h4 class="mb-1">Points left: @(RedPlayer.PointsLeft)</h4>
             <table>
                 <tr>
                     <th>0</th>
@@ -54,8 +59,9 @@
                 }
             </table>
         </div>
-        <div class="col-6">
-            <h3>Player Blue</h3>
+        <div class="col-6 mb-1">
+            <h3 class="blue mb-1">Player Blue</h3>
+            <h4 class="mb-1">Points left: @(BluePlayer.PointsLeft)</h4>
             <table>
                 <tr>
                     <th>0</th>
@@ -102,11 +108,13 @@
         </div>
     </div>
 
-    @if(RedPlayer.PointsLeft == 0){
+    @if (RedPlayer.PointsLeft == 0)
+    {
         <h1 class="blue">Blue player victory!</h1>
     }
-    
-    @if(BluePlayer.PointsLeft == 0){
+
+    @if (BluePlayer.PointsLeft == 0)
+    {
         <h1 class="red">Red player victory!</h1>
     }
 </div>
