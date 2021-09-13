@@ -48,3 +48,49 @@ a, .btn-link {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+td {
+    text-align: center;
+    border: 1px solid black;
+    padding: 1rem;
+    background-color: aliceblue;
+}
+
+td.redShip {
+    background-color: red;
+}
+
+td.blueShip {
+    background-color: blue;
+}
+
+td.hit {
+    background-color: black;
+    color: red;
+}
+
+td.miss{
+    background-color: green;
+}
+
+tr th {
+    text-align: center;
+}
+
+tr td:last-child {
+    padding: unset;
+    background-color: unset;
+    border-top:    0;
+    border-right: 0; 
+    border-bottom: 0;
+    padding-left: 0.5rem;
+}
+
+.blue {
+    color: blue;
+}
+
+.red {
+    color: red;
+}
+
