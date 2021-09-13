@@ -22,7 +22,7 @@ namespace battleship.Models
             {
                 for (int j = 0; j < fieldHeight; j++)
                 {
-                    _cells[i, j] = new Cell { CellState = CellState.Empty };
+                    _cells[i, j] = new Cell { CellState = CellState.Empty, ShipType = ShipType.None };
                 }
             }
         }

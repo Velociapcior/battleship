@@ -8,6 +8,8 @@ namespace battleship.Pages
 {
     public partial class Index
     {
+        private bool _areShipsPlaced = false;
+
         public Player RedPlayer { get; set; }
 
         public Player BluePlayer { get; set; }
@@ -15,7 +17,9 @@ namespace battleship.Pages
         public Dictionary<ShipType, int> Ships { get; set; }
 
         public int FieldWidth { get; set; }
+
         public int MaxPoints { get; private set; }
+
         public int FieldHeight { get; set; }
 
         protected override void OnInitialized()
@@ -62,10 +66,16 @@ namespace battleship.Pages
             _gameService.PlaceShips(Ships, RedPlayer.GameField);
 
             _gameService.PlaceShips(Ships, BluePlayer.GameField);
+
+            _areShipsPlaced = true;
         }
 
         public async void StartGame()
         {
+            if(!_areShipsPlaced){
+                PlaceShips();
+            }
+
             while (RedPlayer.PointsLeft > 0 || BluePlayer.PointsLeft > 0)
             {
                 //Red player move
@@ -82,6 +92,8 @@ namespace battleship.Pages
                     break;
                 }
             }
+
+            _areShipsPlaced = false;
         }
 
         public async Task TakeShot(string playerName)
@@ -118,15 +130,16 @@ namespace battleship.Pages
                 }.Where(x => x.CoordinateX >= 0 && x.CoordinateX < FieldWidth &&
                              x.CoordinateY >= 0 && x.CoordinateY < FieldHeight).ToList();
 
-               var nextMove = surroundingMoves
-               .Where(sm => !shootingPlayer.PlayerMoves
-               .Any(pm => pm.CoordinateX == sm.CoordinateX && pm.CoordinateY == sm.CoordinateY)).ToList().FirstOrDefault();
+                var nextMove = surroundingMoves
+                .Where(sm => !shootingPlayer.PlayerMoves
+                .Any(pm => pm.CoordinateX == sm.CoordinateX && pm.CoordinateY == sm.CoordinateY)).ToList().FirstOrDefault();
 
-               if(nextMove != null){
-                   Console.WriteLine($"Found next move {nextMove.CoordinateX}, {nextMove.CoordinateY}");
-                   x = nextMove.CoordinateX;
-                   y = nextMove.CoordinateY;
-               }
+                if (nextMove != null)
+                {
+                    Console.WriteLine($"Found next move {nextMove.CoordinateX}, {nextMove.CoordinateY}");
+                    x = nextMove.CoordinateX;
+                    y = nextMove.CoordinateY;
+                }
             }
 
             while (shootingPlayer.PlayerMoves.Any(m => m.CoordinateX == x && m.CoordinateY == y))
